@@ -1,7 +1,7 @@
 import { CacheSystem } from './cache.js';
 
 export class API {
-    static BASE_URL = 'http://127.0.0.1:3006/api';
+    static BASE_URL = 'https://onach-api.onrender.com';
 
     static getToken() {
         return localStorage.getItem('onachStoreToken');

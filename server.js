@@ -16,14 +16,13 @@ const app = express();
 const port = process.env.PORT || 3006;
 
 // Configuración CORS
-const allowedOrigins = ['http://127.0.0.1:5500', 'http://localhost', 'http://localhost:80', 'null'];
-app.use(cors({
-    origin: function (origin, callback) {
-        if (!origin || allowedOrigins.indexOf(origin) !== -1) { callback(null, true); } 
-        else { callback(null, true); }
-    },
-    credentials: true
-}));
+const allowedOrigins = [
+    'http://127.0.0.1:5500', 
+    'http://localhost', 
+    'http://localhost:80', 
+    'null',
+    'https://onach-urban-store.netlify.app' 
+];
 
 app.use(express.json());
 

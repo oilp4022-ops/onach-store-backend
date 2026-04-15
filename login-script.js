@@ -9,7 +9,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const registerWrapper = document.getElementById('register-wrapper');
     const mfaWrapper = document.getElementById('mfa-wrapper');
     
-    const API_URL = 'http://127.0.0.1:3006';
+    const API_URL = 'https://onach-api.onrender.com'; // Asegúrate de poner tu URL real sin el / al final
     let temporalUserId = null; // Guardará el ID temporalmente para el paso 2
 
     // --- LÓGICA CAPTCHA (Registro) ---
