@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Onach Urban Store - Inicio</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+
+    <header class="main-header">
+        <div class="header-container">
+            <div class="hamburger-menu" id="hamburger-btn">
+                <i class="fas fa-bars"></i>
+            </div>
+
+            <div class="logo">
+                <a href="index.html">
+                    <img src="imagenes/logo-removebg-preview.png" alt="Onach Logo">
+                </a>
+            </div>
+
+            <nav class="desktop-nav">
+                <ul>
+                    <li><a href="index.html">INICIO</a></li>
+                    <li><a href="productos_nuevos.html">NEW ARRIVALS</a></li>
+                    <li><a href="gestion.html" id="admin-link-desktop" style="color: var(--color-carmesi); display: none;">ADMIN LOCAL</a></li>
+                </ul>
+            </nav>
+
+            <div class="header-search">
+                <form id="header-search-form">
+                    <input type="text" id="header-search-input" placeholder="Buscar...">
+                    <button type="submit"><i class="fas fa-search"></i></button>
+                </form>
+            </div>
+
+            <div class="header-icons">
+                <span id="user-display-name" class="user-name-span"></span>
+                
+                <a href="login.html" title="Mi Cuenta / Seguridad"><i class="far fa-user"></i></a>
+                
+                <div class="cart-icon-container" id="cart-btn">
+                    <i class="fas fa-shopping-bag"></i>
+                    <span class="cart-count">0</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="mobile-nav-container" id="mobile-menu">
+        <div class="mobile-header">
+            <h3>Menú</h3>
+            <button class="close-btn" id="close-menu-btn">&times;</button>
+        </div>
+        <nav class="mobile-nav">
+            <a href="index.html">Inicio</a>
+            <a href="productos_nuevos.html">New Arrivals</a>
+            <a href="gestion.html" id="admin-link-mobile" style="color: var(--color-carmesi); font-weight: bold; display: none;">Admin Local (Gestión)</a>
+            <a href="login.html">Iniciar Sesión</a>
+            <a href="mi-cuenta.html">Mi Cuenta (Seguridad)</a>
+        </nav>
+    </div>
+    <div class="overlay" id="overlay"></div>
+
+    <main class="main-content">
+        <section class="hero-section">
+            <div class="hero-content">
+                <h1>Descubre la moda urbana que te define</h1>
+                <p>En Onach Urban Store, ofrecemos una selección única de prendas y accesorios que reflejan tu estilo personal. Explora nuestra colección y encuentra las piezas perfectas para cada ocasión.</p>
+                <div class="hero-buttons">
+                    <a href="explorar.html" class="button button-explore">
+                        <i class="fas fa-search"></i> Explorar
+                    </a>
+                    <a href="#product-listing-section" class="button button-shop"> 
+                        <i class="fas fa-shopping-bag"></i> Comprar Ahora
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <section class="carousel-section" style="max-width: 1000px; margin: -20px auto 40px auto;">
+            <div class="carousel-container" id="main-carousel">
+                <div class="carousel-track">
+                    <div class="carousel-slide"><img src="imagenes/BoneFishBlack.jpg" alt="Colección Flores"></div>
+                    <div class="carousel-slide"><img src="imagenes/BoneFishSky.jpg" alt="Colección Invierno"></div>
+                    <div class="carousel-slide"><img src="imagenes/SullenRose.jpg" alt="Streetwear"></div>
+                </div>
+                <button class="carousel-btn prev">&#10094;</button>
+                <button class="carousel-btn next">&#10095;</button>
+            </div>
+        </section>
+
+        <section class="explora-estilo-section">
+            <h2 class="section-title">Explora tu Estilo Urbano</h2>
+            <div class="features-container">
+                <div class="feature-card invierno-destacada">
+                    <img src="imagenes/invierno.jpg" alt="Colección Invierno Icono" class="feature-icon">
+                    <h3>Colección Invierno '25 <i class="fas fa-snowflake"></i></h3>
+                    <p>Abrígate con estilo. Descubre nuestras nuevas chaquetas y sudaderas.</p>
+                    <a href="productos_nuevos.html" class="feature-button button-collection">Ver Colección <i class="fas fa-arrow-right"></i></a>
+                </div>
+                <div class="feature-card streetwear-destacada">
+                    <img src="imagenes/Streetwear Essentials.jpg" alt="Guía de Estilo Icono" class="feature-icon">
+                    <h3>Guía de Estilo: Streetwear Essentials <i class="fas fa-book-open"></i></h3>
+                    <p>Aprende a combinar tus prendas para un look impecable.</p>
+                    <a href="#" class="feature-button button-guide">Leer Guía <i class="fas fa-arrow-right"></i></a>
+                </div>
+                <div class="feature-card comunidad-destacada">
+                    <img src="imagenes/Imagen de WhatsApp 2025-07-04 a las 19.38.41_8900d60f.jpg" alt="Comunidad Onach Icono" class="feature-icon">
+                    <h3>Onach en la Calle <i class="fas fa-users"></i></h3>
+                    <p>Mira cómo nuestra comunidad luce las prendas más top de Onach.</p>
+                    <a href="#" class="feature-button button-photos">Ver Fotos <i class="fas fa-arrow-right"></i></a>
+                </div>
+            </div>
+            <div class="call-to-action-box">
+                <h4>¿No sabes por dónde empezar?</h4>
+                <p>Te guiamos para encontrar las prendas que mejor se adaptan a tu personalidad y tu día a día.</p>
+                <a href="#" class="button button-guide-me"><i class="fas fa-compass"></i> Guíame</a>
+            </div>
+        </section>
+       
+        <section class="product-listing-section" id="product-listing-section">
+            <h2 class="section-title" id="listing-title">TODOS NUESTROS PRODUCTOS</h2>
+            <p class="section-subtitle" id="listing-subtitle" style="text-align: center; margin-bottom: 2rem;">Explora nuestra colección completa o utiliza los filtros del menú.</p>
+            
+            <div class="product-grid" id="main-product-grid">
+                <p style="grid-column: 1 / -1; text-align: center;">Cargando productos del servidor...</p>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-logo">
+                <img src="imagenes/logo-removebg-preview.png" alt="Onach Urban Store Logo Footer">
+            </div>
+            <div class="footer-links">
+                <h3>Accesos Rápidos</h3>
+                <ul>
+                    <li><a href="#">Sobre Nosotros</a></li>
+                    <li><a href="#">Contacto</a></li>
+                    <li><a href="mi-cuenta.html">Panel de Mi Cuenta</a></li>
+                    <li><a href="recuperar.html">Recuperar Contraseña</a></li>
+                    <li><a href="aviso-privacidad.html">Aviso de Privacidad</a></li> 
+                </ul>
+            </div>
+            <div class="footer-social">
+                <h3>Síguenos</h3>
+                <a href="#"><i class="fab fa-facebook-f"></i></a>
+                <a href="#"><i class="fab fa-instagram"></i></a>
+                <a href="#"><i class="fab fa-twitter"></i></a>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2026 Onach Urban Store. Todos los derechos reservados.</p>
+        </div>
+    </footer>
+
+    <div class="cart-modal" id="cart-modal">
+        <div class="cart-modal-header">
+            <img src="imagenes/logo-removebg-preview.png" alt="Logo de la tienda" class="cart-modal-logo">
+            <h2>Tu Carrito</h2>
+            <button class="close-cart-btn">&times;</button>
+        </div>
+        <div class="cart-items" id="cart-items-container">
+            <p class="empty-cart-message">Tu carrito está vacío.</p>
+        </div>
+        <div class="cart-summary">
+            <p>Total: <span id="cart-total">$0.00</span></p>
+            <button class="checkout-btn" onclick="window.location.href='checkout.html'">Proceder al Pago</button>
+            <button class="clear-cart-btn">Vaciar Carrito</button>
+        </div>
+    </div>
+    <div class="cart-overlay" id="cart-overlay"></div>
+
+    <script type="module" src="js/app.js"></script>
+    
+    <div id="cart-notification-container"></div>
+</body>
+</html>

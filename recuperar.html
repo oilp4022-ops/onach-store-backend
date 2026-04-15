@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recuperar Contraseña - Onach Store</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .login-container { max-width: 500px; margin: 80px auto; padding: 20px; }
+        .form-wrapper { background: white; padding: 30px; border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; margin-bottom: 5px; font-weight: bold; }
+        .form-group input { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box;}
+        .btn-form { width: 100%; padding: 12px; background: var(--color-carmesi); color: white; border: none; border-radius: 5px; font-weight: bold; cursor: pointer; margin-top: 10px; }
+        .message-box { text-align: center; margin-top: 15px; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <header class="main-header">
+        <div class="header-container">
+            <div class="logo"><a href="index.html"><img src="imagenes/logo-removebg-preview.png" alt="Onach Logo"></a></div>
+            <nav class="desktop-nav"><ul><li><a href="login.html">Volver al Login</a></li></ul></nav>
+        </div>
+    </header>
+
+    <main class="login-container">
+        <div class="form-wrapper" id="step-1">
+            <h2 style="color: var(--color-rosa-intenso); text-align: center;">Recuperar Contraseña</h2>
+            <p style="text-align: center; color: #666;">Ingresa tu correo y te enviaremos un código.</p>
+            <form id="forgot-form">
+                <div class="form-group">
+                    <label>Correo Electrónico</label>
+                    <input type="email" id="forgot-email" required>
+                </div>
+                <button type="submit" class="btn-form">Enviar Código</button>
+                <div id="forgot-message" class="message-box"></div>
+            </form>
+        </div>
+
+        <div class="form-wrapper" id="step-2" style="display: none;">
+            <h2 style="color: var(--color-rosa-intenso); text-align: center;">Nueva Contraseña</h2>
+            <form id="reset-form">
+                <div class="form-group">
+                    <label>Código de 6 dígitos</label>
+                    <input type="text" id="reset-code" required maxlength="6" style="text-align: center; letter-spacing: 5px; font-size: 1.2rem;">
+                </div>
+                <div class="form-group">
+                    <label>Nueva Contraseña</label>
+                    <input type="password" id="reset-password" required minlength="6">
+                </div>
+                <button type="submit" class="btn-form">Guardar y Entrar</button>
+                <div id="reset-message" class="message-box"></div>
+            </form>
+        </div>
+    </main>
+
+    <script>
+        const API_URL = 'http://127.0.0.1:3006';
+        let savedEmail = '';
+
+        document.getElementById('forgot-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const msg = document.getElementById('forgot-message');
+            msg.textContent = 'Enviando...'; msg.style.color = 'blue';
+            savedEmail = document.getElementById('forgot-email').value;
+
+            try {
+                const res = await fetch(`${API_URL}/api/forgot-password`, {
+                    method: 'POST', headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email: savedEmail })
+                });
+                const data = await res.json();
+                if (!res.ok) throw new Error(data.error);
+                
+                document.getElementById('step-1').style.display = 'none';
+                document.getElementById('step-2').style.display = 'block';
+            } catch (err) { msg.textContent = err.message; msg.style.color = 'red'; }
+        });
+
+        document.getElementById('reset-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const msg = document.getElementById('reset-message');
+            msg.textContent = 'Verificando...'; msg.style.color = 'blue';
+            
+            const token = document.getElementById('reset-code').value;
+            const newPassword = document.getElementById('reset-password').value;
+
+            try {
+                const res = await fetch(`${API_URL}/api/reset-password`, {
+                    method: 'POST', headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email: savedEmail, token, newPassword })
+                });
+                const data = await res.json();
+                if (!res.ok) throw new Error(data.error);
+                
+                msg.textContent = '✅ ¡Contraseña cambiada! Redirigiendo...'; msg.style.color = 'green';
+                setTimeout(() => window.location.href = 'login.html', 2000);
+            } catch (err) { msg.textContent = err.message; msg.style.color = 'red'; }
+        });
+    </script>
+</body>
+</html>

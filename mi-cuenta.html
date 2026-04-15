@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mi Cuenta - Onach Seguridad</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        .account-container { max-width: 1000px; margin: 40px auto; padding: 20px; }
+        .dashboard-grid { display: grid; grid-template-columns: 1fr 2fr; gap: 30px; margin-top: 20px; }
+        .card { background: white; padding: 25px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
+        .card h3 { margin-top: 0; color: var(--color-rosa-intenso); border-bottom: 2px solid #eee; padding-bottom: 10px; }
+        
+        .session-item { display: flex; justify-content: space-between; align-items: center; padding: 15px; border: 1px solid #eee; border-radius: 10px; margin-bottom: 10px; background: #fdfdfd; }
+        .session-info h4 { margin: 0 0 5px 0; color: var(--color-texto-oscuro); }
+        .session-info p { margin: 0; font-size: 0.9rem; color: var(--color-texto-medio); }
+        .current-badge { background: var(--color-amarillo); color: black; padding: 3px 8px; border-radius: 20px; font-size: 0.8rem; font-weight: bold; margin-left: 10px; }
+        
+        .btn-logout { background: #333; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-weight: bold; width: 100%; margin-top: 20px; transition: 0.3s;}
+        .btn-logout:hover { background: var(--color-carmesi); }
+
+        @media (max-width: 768px) { .dashboard-grid { grid-template-columns: 1fr; } }
+    </style>
+</head>
+<body>
+
+    <header class="main-header">
+        <div class="header-container">
+            <div class="logo">
+                <a href="index.html"><img src="imagenes/logo-removebg-preview.png" alt="Onach Logo"></a>
+            </div>
+            <nav class="desktop-nav">
+                <ul>
+                    <li><a href="index.html">VOLVER A LA TIENDA</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main class="account-container">
+        <h1 style="color: var(--color-texto-oscuro);">Panel de Seguridad</h1>
+        
+        <div class="dashboard-grid">
+            <div class="card">
+                <h3><i class="fas fa-user-circle"></i> Mi Perfil</h3>
+                <h2 id="profile-name" style="margin-bottom: 5px;">Cargando...</h2>
+                <p id="profile-role" style="color: var(--color-carmesi); font-weight: bold; text-transform: uppercase;"></p>
+                <button id="logout-btn" class="btn-logout"><i class="fas fa-sign-out-alt"></i> Cerrar Sesión</button>
+            </div>
+
+            <div class="card">
+                <h3><i class="fas fa-laptop-house"></i> Dispositivos Conectados</h3>
+                <p style="font-size: 0.9rem; color: #666; margin-bottom: 20px;">Revisa desde dónde has iniciado sesión últimamente.</p>
+                
+                <div id="sessions-container">
+                    <p>Cargando sesiones...</p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <p style="text-align: center; padding: 20px; background: #000; color: white; margin:0;">&copy; 2026 Onach Urban Store.</p>
+    </footer>
+
+    <script type="module" src="js/cuenta.js"></script>
+</body>
+</html>

@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Finalizar Compra - Onach Urban Store</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        .checkout-container { max-width: 1200px; margin: 40px auto; padding: 20px; display: grid; grid-template-columns: 1.5fr 1fr; gap: 40px; }
+        .checkout-section { background: white; padding: 30px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
+        .checkout-section h2 { margin-top: 0; border-bottom: 2px solid var(--color-gris-neutro); padding-bottom: 10px; margin-bottom: 20px; }
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; margin-bottom: 5px; font-weight: bold; color: var(--color-texto-oscuro); }
+        .form-group input { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 1rem; box-sizing: border-box; }
+        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        
+        .order-summary-box { background: var(--color-gris-neutro); padding: 25px; border-radius: 15px; position: sticky; top: 100px; }
+        .summary-row { display: flex; justify-content: space-between; margin-bottom: 15px; font-size: 1.1rem; }
+        .summary-total { font-size: 1.5rem; font-weight: bold; color: var(--color-carmesi); border-top: 2px solid #ddd; padding-top: 15px; margin-top: 10px; }
+        
+        #place-order-btn { width: 100%; padding: 15px; font-size: 1.2rem; background: var(--color-carmesi); color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; transition: 0.3s; margin-top: 20px; }
+        #place-order-btn:hover { background: var(--color-rosa-oscuro); }
+        #place-order-btn:disabled { background: #ccc; cursor: not-allowed; }
+
+        @media (max-width: 768px) { .checkout-container { grid-template-columns: 1fr; } }
+    </style>
+</head>
+<body>
+
+    <header class="main-header">
+        <div class="header-container">
+            <div class="logo">
+                <a href="index.html"><img src="imagenes/logo-removebg-preview.png" alt="Onach Logo"></a>
+            </div>
+            <nav class="desktop-nav">
+                <ul>
+                    <li><a href="index.html">Volver a la Tienda</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main class="checkout-container">
+        
+        <div class="checkout-section">
+            <h2>1. Datos de Envío</h2>
+            <form id="checkout-form">
+                <div class="form-group">
+                    <label>Nombre Completo</label>
+                    <input type="text" placeholder="Ej: Oscar Ivan" required>
+                </div>
+                <div class="form-group">
+                    <label>Dirección de Entrega</label>
+                    <input type="text" placeholder="Calle, Número, Colonia" required>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Ciudad</label>
+                        <input type="text" placeholder="Aguascalientes" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Código Postal</label>
+                        <input type="number" placeholder="20000" required>
+                    </div>
+                </div>
+
+                <h2 style="margin-top: 30px;">2. Método de Pago</h2>
+                <div class="form-group">
+                    <label>Número de Tarjeta (Simulado)</label>
+                    <input type="text" placeholder="**** **** **** ****" required>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Vencimiento</label>
+                        <input type="text" placeholder="MM/AA" required>
+                    </div>
+                    <div class="form-group">
+                        <label>CVC</label>
+                        <input type="text" placeholder="123" required>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <div class="order-summary-box">
+            <h2>Resumen de Compra</h2>
+            
+            <div id="checkout-items-list" style="margin-bottom: 20px;">
+                <p>Cargando carrito...</p>
+            </div>
+
+            <div class="summary-row">
+                <span>Subtotal:</span>
+                <span id="checkout-subtotal">$0.00</span>
+            </div>
+            <div class="summary-row">
+                <span>Costo de Envío:</span>
+                <span id="checkout-shipping">$0.00</span>
+            </div>
+            <div class="summary-row summary-total">
+                <span>Total a Pagar:</span>
+                <span id="checkout-grand-total">$0.00</span>
+            </div>
+
+            <button id="place-order-btn" form="checkout-form">Confirmar y Pagar</button>
+        </div>
+
+    </main>
+
+    <footer>
+        <div class="footer-bottom" style="text-align: center; padding: 20px; background: #000; color: white;">
+            <p>&copy; 2026 Onach Urban Store. Compra 100% Segura.</p>
+        </div>
+    </footer>
+
+    <script type="module" src="js/checkout.js"></script>
+
+</body>
+</html>

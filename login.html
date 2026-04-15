@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Acceso Seguro - Onach Urban Store</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        .login-container {
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+            padding: 120px 20px 40px 20px;
+            max-width: 1000px;
+            margin: 0 auto;
+            gap: 2rem;
+        }
+        .form-wrapper {
+            flex: 1;
+            min-width: 300px;
+            padding: 2rem;
+            background-color: var(--color-blanco);
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            transition: opacity 0.3s ease;
+        }
+        .form-wrapper h2 {
+            text-align: center;
+            color: var(--color-rosa-intenso);
+            margin-bottom: 1.5rem;
+        }
+        .form-group { margin-bottom: 1rem; }
+        .form-group label { display: block; margin-bottom: 0.5rem; font-weight: 600; }
+        .form-group input { width: 100%; padding: 0.8rem; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box; }
+        
+        .captcha-group { background-color: #f9f9f9; padding: 10px; border-radius: 5px; border: 1px solid #eee; margin-bottom: 1rem; }
+        .captcha-label { color: var(--color-carmesi); font-weight: bold; margin-bottom: 5px; display: block; }
+
+        .btn-form { width: 100%; padding: 0.8rem; border: none; border-radius: 5px; background-color: var(--color-carmesi); color: white; font-size: 1rem; font-weight: bold; cursor: pointer; transition: 0.3s ease; }
+        .btn-form:hover { background-color: var(--color-rosa-oscuro); }
+        .message-box { text-align: center; margin-top: 1rem; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+    <header class="main-header">
+        <div class="header-container">
+            <div class="logo">
+                <a href="index.html"><img src="imagenes/logo-removebg-preview.png" alt="Onach Logo"></a>
+            </div>
+            <nav class="desktop-nav">
+                <ul>
+                    <li><a href="index.html">VOLVER A LA TIENDA</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main class="login-container">
+        <div class="form-wrapper" id="login-wrapper">
+            <h2>Iniciar Sesión</h2>
+            <form id="login-form">
+                <div class="form-group">
+                    <label>Correo Electrónico</label>
+                    <input type="email" id="login-email" required>
+                </div>
+                <div class="form-group">
+                    <label>Contraseña</label>
+                    <input type="password" id="login-password" required>
+                </div>
+                <button type="submit" class="btn-form">Entrar</button>
+                <div id="login-message" class="message-box"></div>
+            </form>
+        </div>
+
+        <div class="form-wrapper" id="register-wrapper">
+            <h2>Crear Cuenta</h2>
+            <form id="register-form">
+                <div class="form-group">
+                    <label>Nombre</label>
+                    <input type="text" id="register-name" required minlength="2">
+                </div>
+                <div class="form-group">
+                    <label>Apellido</label>
+                    <input type="text" id="register-lastname" required minlength="2">
+                </div>
+                <div class="form-group">
+                    <label>Correo Electrónico</label>
+                    <input type="email" id="register-email" required>
+                </div>
+                <div class="form-group">
+                    <label>Contraseña</label>
+                    <input type="password" id="register-password" required minlength="6">
+                </div>
+                <div class="form-group">
+                    <label>Confirmar Contraseña</label>
+                    <input type="password" id="register-confirm-password" required>
+                </div>
+                <div class="form-group captcha-group">
+                    <label class="captcha-label" id="captcha-question">Verificación: ¿Cuánto es 3 + 4?</label>
+                    <input type="number" id="captcha-input" placeholder="Escribe el resultado" required>
+                    <input type="hidden" id="captcha-answer"> 
+                </div>
+                <button type="submit" class="btn-form">Registrarse</button>
+                <div id="register-message" class="message-box"></div>
+            </form>
+        </div>
+
+        <div class="form-wrapper" id="mfa-wrapper" style="display: none; max-width: 450px; margin: 0 auto; flex: none;">
+            <h2><i class="fas fa-shield-alt"></i> Seguridad en 2 Pasos</h2>
+            <p style="text-align:center; margin-bottom: 20px; color: #555;">
+                Hemos enviado un código de seguridad de 6 dígitos. (Para esta práctica, revisa tu terminal negra de Node.js para ver el SMS simulado).
+            </p>
+            <form id="mfa-form">
+                <div class="form-group">
+                    <label style="text-align: center; font-size: 1.2rem;">Ingresa tu código:</label>
+                    <input type="text" id="mfa-code" placeholder="Ej: 123456" required maxlength="6" pattern="\d{6}" style="text-align: center; font-size: 1.5rem; letter-spacing: 5px;">
+                </div>
+                <button type="submit" class="btn-form" style="background-color: var(--color-amarillo); color: black;">Verificar Código</button>
+                <div id="mfa-message" class="message-box"></div>
+                
+                <button type="button" id="cancel-mfa-btn" style="background:none; border:none; color:var(--color-texto-medio); width:100%; margin-top:15px; cursor:pointer; text-decoration:underline;">
+                    Cancelar y volver
+                </button>
+            </form>
+        </div>
+
+    </main>
+
+    <footer>
+        <p style="text-align: center; padding: 20px; background: #000; color: white; margin:0;">&copy; 2026 Onach Urban Store. Seguridad Bancaria.</p>
+    </footer>
+
+    <script src="login-script.js"></script> 
+</body>
+</html>

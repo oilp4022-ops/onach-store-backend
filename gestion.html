@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <script>
+        const role = localStorage.getItem('userRole');
+        if (role !== 'admin') {
+            alert('Acceso restringido a administradores.');
+            window.location.href = 'index.html';
+        }
+    </script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Inventario Onach</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        /* ESTILOS DE GESTIÓN */
+        .gestion-container { max-width: 1000px; margin: 40px auto; padding: 20px; display: grid; grid-template-columns: 1fr 2fr; gap: 30px; }
+        .form-card, .table-card { background: white; padding: 25px; border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        .form-group { margin-bottom: 15px; }
+        .form-group input, .form-group select { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        th, td { padding: 12px; text-align: left; border-bottom: 1px solid #eee; }
+        .actions button { margin-right: 5px; cursor: pointer; padding: 5px 10px; border: none; border-radius: 3px; color: white; }
+        .btn-edit { background: var(--color-amarillo); color: #333 !important; }
+        .btn-delete { background: var(--color-carmesi); }
+        .alert { padding: 10px; margin-bottom: 15px; border-radius: 5px; display: none; text-align: center; font-weight: bold;}
+        .alert-success { background: #d4edda; color: #155724; }
+        .alert-error { background: #f8d7da; color: #721c24; }
+        @keyframes slideIn { from { opacity: 0; transform: translateX(-20px); } to { opacity: 1; transform: translateX(0); } }
+        @keyframes fadeOut { to { opacity: 0; transform: scale(0.9); } }
+        .animate-entry { animation: slideIn 0.5s ease forwards; }
+        .animate-exit { animation: fadeOut 0.5s ease forwards; }
+        tr.draggable { cursor: move; transition: background 0.2s; }
+        tr.draggable:hover { background-color: #f9f9f9; }
+        tr.dragging { opacity: 0.5; background-color: #e0e0e0; border: 2px dashed #999; }
+        .btn-api { background: #28a745; color: white; padding: 8px 15px; border: none; border-radius: 5px; cursor: pointer; font-weight: bold;}
+        .btn-api:hover { background: #218838; }
+        @media (max-width: 768px) { .gestion-container { grid-template-columns: 1fr; } }
+    </style>
+</head>
+<body>
+    <header class="main-header">
+        <div class="header-logo-center">
+            <img src="imagenes/logo-removebg-preview.png" alt="Onach Logo" style="height: 40px;">
+        </div>
+        <div class="header-right">
+            <a href="index.html" style="font-weight: bold; margin-right: 20px;">Volver a la Tienda</a>
+        </div>
+    </header>
+
+    <main style="padding-top: 80px;">
+        <h2 class="section-title">Panel de Gestión</h2>
+        
+        <div class="gestion-container">
+            <div class="form-card animate-entry">
+                <h3 id="form-title">Agregar Producto</h3>
+                <div id="alert-box" class="alert"></div>
+                <form id="product-form">
+                    <input type="hidden" id="product-id">
+                    <div class="form-group">
+                        <label>Nombre del Producto</label>
+                        <input type="text" id="nombre" placeholder="Ej: Playera Bonefish" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Precio (MXN)</label>
+                        <input type="number" id="precio" placeholder="0.00" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Imagen (Nombre del archivo o Link)</label>
+                        <input type="text" id="imagen" placeholder="Ej: playera.jpg o https://...">
+                    </div>
+                    <div class="form-group">
+                        <label>Categoría</label>
+                        <select id="categoria">
+                            <option value="playeras">Playeras</option>
+                            <option value="pantalones">Pantalones</option>
+                            <option value="gorras">Gorras</option>
+                            <option value="sudaderas">Hoodies</option>
+                            <option value="accesorios">Accesorios</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn-form">Guardar Producto</button>
+                    <button type="button" id="cancel-edit" class="btn-form" style="background:#666; margin-top:10px; display:none;">Cancelar</button>
+                </form>
+            </div>
+
+            <div class="table-card animate-entry">
+                <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap: wrap; gap: 10px;">
+                    <h3>Inventario</h3>
+                    <button id="btn-convert-currency" class="btn-api"><i class="fas fa-dollar-sign"></i> Convertir a USD (API)</button>
+                    <input type="text" id="search-filter" placeholder="Buscar..." style="padding:5px; border-radius:5px; border:1px solid #ccc;">
+                </div>
+                <p style="font-size: 0.8rem; color: #666; margin-top: 5px;"><i class="fas fa-info-circle"></i> Reto: Arrastra las filas para reordenar.</p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Imagen</th> 
+                            <th>Nombre</th>
+                            <th id="price-header">Precio (MXN)</th>
+                            <th>Categoría</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="product-list">
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+
+    <script type="module" src="js/admin.js"></script>
+</body>
+</html>

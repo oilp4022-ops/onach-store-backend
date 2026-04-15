@@ -1,0 +1,53 @@
+{
+	"info": {
+		"name": "Onach Urban Store API - Seguridad",
+		"description": "Endpoints de autenticación, MFA y productos para el proyecto Onach.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "1. Registrar Usuario",
+			"request": {
+				"method": "POST",
+				"header": [{"key": "Content-Type", "value": "application/json"}],
+				"url": {"raw": "http://127.0.0.1:3006/api/register", "host": ["http://127.0.0.1:3006"], "path": ["api", "register"]},
+				"body": {"mode": "raw", "raw": "{\n    \"nombre\": \"Oscar\",\n    \"apellido\": \"Ivan\",\n    \"email\": \"prueba@onach.com\",\n    \"password\": \"123456\"\n}"}
+			}
+		},
+		{
+			"name": "2. Login (Paso 1 - Generar MFA)",
+			"request": {
+				"method": "POST",
+				"header": [{"key": "Content-Type", "value": "application/json"}],
+				"url": {"raw": "http://127.0.0.1:3006/api/login", "host": ["http://127.0.0.1:3006"], "path": ["api", "login"]},
+				"body": {"mode": "raw", "raw": "{\n    \"email\": \"prueba@onach.com\",\n    \"password\": \"123456\"\n}"}
+			}
+		},
+		{
+			"name": "3. Verificar MFA (Paso 2)",
+			"request": {
+				"method": "POST",
+				"header": [{"key": "Content-Type", "value": "application/json"}],
+				"url": {"raw": "http://127.0.0.1:3006/api/verify-mfa", "host": ["http://127.0.0.1:3006"], "path": ["api", "verify-mfa"]},
+				"body": {"mode": "raw", "raw": "{\n    \"userId\": 1,\n    \"mfaCode\": \"123456\"\n}"}
+			}
+		},
+		{
+			"name": "4. Obtener Sesiones Activas",
+			"request": {
+				"method": "GET",
+				"header": [{"key": "Authorization", "value": "Bearer TU_TOKEN_AQUI"}],
+				"url": {"raw": "http://127.0.0.1:3006/api/sessions", "host": ["http://127.0.0.1:3006"], "path": ["api", "sessions"]}
+			}
+		},
+		{
+			"name": "5. Recuperar Contraseña (Enviar Correo)",
+			"request": {
+				"method": "POST",
+				"header": [{"key": "Content-Type", "value": "application/json"}],
+				"url": {"raw": "http://127.0.0.1:3006/api/forgot-password", "host": ["http://127.0.0.1:3006"], "path": ["api", "forgot-password"]},
+				"body": {"mode": "raw", "raw": "{\n    \"email\": \"prueba@onach.com\"\n}"}
+			}
+		}
+	]
+}

@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Productos Nuevos - Onach Urban Store</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+
+    <header class="main-header">
+        <div class="header-left">
+            <div class="hamburger-menu">
+                <i class="fas fa-bars"></i>
+            </div>
+            <nav class="main-nav desktop-nav">
+                <ul>
+                    <li><a href="index.html">INICIO</a></li>
+                    <li><a href="productos_nuevos.html">NEW ARRIVALS</a></li>
+                    <li class="dropdown">
+                        <a href="catalogo.html">ROPA <span class="arrow-down"></span></a>
+                        <div class="dropdown-content">
+                            <a href="catalogo.html?category=playeras">PLAYERAS</a>
+                            <a href="catalogo.html?category=camisas">CAMISAS</a>
+                            <a href="catalogo.html?category=sudaderas">SUDADERAS</a>
+                            <a href="catalogo.html?category=chamarras">CHAMARRAS</a>
+                            <a href="catalogo.html?category=pantalones">PANTALONES</a>
+                            <a href="catalogo.html?category=shorts">SHORTS</a>
+                        </div>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+
+        <div class="header-logo-center">
+            <img src="imagenes/logopng.png" alt="Onach Urban Store Logo">
+        </div>
+
+        <div class="header-right">
+            <nav class="main-nav desktop-nav">
+                <ul>
+                    <li class="dropdown">
+                        <a href="catalogo.html">ACCESORIOS <span class="arrow-down"></span></a>
+                        <div class="dropdown-content">
+                            <a href="catalogo.html?category=gorras">GORRAS</a>
+                            <a href="catalogo.html?category=pasamontanas">PASAMONTAÑAS</a>
+                            <a href="catalogo.html?category=calcetas">CALCETAS</a>
+                            <a href="catalogo.html?category=bandanas">BANDANAS</a>
+                            <a href="catalogo.html?category=bags">BAGS</a>
+                            <a href="catalogo.html?category=otros">OTROS</a>
+                        </div>
+                    </li>
+                    <li><a href="catalogo.html?category=calzado">CALZADO</a></li>
+                    <li><a href="explorar.html">EXPLORAR</a></li>
+                </ul>
+            </nav>
+            <div class="header-icons">
+                <i class="fas fa-search search-icon"></i>
+                <i class="fas fa-user user-icon"></i>
+                <button class="cart-button">
+                    <i class="fas fa-shopping-cart"></i>
+                    <span class="cart-count">0</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <div class="mobile-nav-container">
+        <nav class="mobile-nav">
+            <div class="mobile-header">
+            
+            </div>
+        </nav>
+    </div>
+    <div class="overlay"></div>
+
+    <main>
+    <h2 class="section-title">Nuevos Lanzamientos</h2>
+
+    <div class="new-products-list">
+        <div class="new-product-item">
+            <img src="imagenes/BoneFishMask.jpg" alt="Nueva Playera 1">
+            <div class="product-details">
+                <h3>Playera Estilo Urbano Pro</h3>
+                <p class="price">$35.00</p>
+                <a href="#" class="add-to-cart-btn-new">Añadir al Carrito</a>
+                <span class="new-badge">NUEVO</span>
+            </div>
+        </div>
+
+        <div class="new-product-item">
+            <img src="imagenes/BoneFishShortGrey.jpg" alt="Nuevo Pantalón 2">
+            <div class="product-details">
+                <h3>Pantalón Jogger Comfort</h3>
+                <p class="price">$55.00</p>
+                <a href="#" class="add-to-cart-btn-new">Añadir al Carrito</a>
+                <span class="new-badge">NUEVO</span>
+            </div>
+        </div>
+
+        <div class="new-product-item">
+            <img src="imagenes/SullenHat.jpg" alt="Nueva Gorra 3">
+            <div class="product-details">
+                <h3>Gorra Snapback Clásica</h3>
+                <p class="price">$25.00</p>
+                <a href="#" class="add-to-cart-btn-new">Añadir al Carrito</a>
+                <span class="new-badge">NUEVO</span>
+            </div>
+        </div>
+
+        </div>
+</main>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-logo"> <img src="logo.jpg" alt="Onach Urban Store Logo"></div>
+            <div class="footer-links">
+    <h3>Información</h3>
+    <ul>
+        <li><a href="#">Sobre Nosotros</a></li>
+        <li><a href="#">Contacto</a></li>
+        <li><a href="#">Términos y Condiciones</a></li>
+        <li><a href="aviso-privacidad.html">Aviso de Privacidad</a></li> 
+    </ul>
+</div>
+            <div class="footer-social">
+                <h3>Síguenos</h3>
+                <a href="#"><i class="fab fa-facebook-f"></i></a>
+                <a href="#"><i class="fab fa-instagram"></i></a>
+                <a href="#"><i class="fab fa-twitter"></i></a>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2025 Onach Urban Store. Todos los derechos reservados.</p>
+        </div>
+    </footer>
+    <script src="script.js"></script>
+<div class="cart-sidebar" id="cart-sidebar">
+        <div class="cart-header">
+            <h2>Tu Carrito</h2>
+            <button class="close-cart-btn">&times;</button>
+        </div>
+        <div class="cart-items" id="cart-items-container">
+            <p class="empty-cart-message">Tu carrito está vacío.</p>
+        </div>
+        <div class="cart-summary">
+            <p>Total: <span id="cart-total">$0.00</span></p>
+            <button class="checkout-btn">Proceder al Pago</button>
+            <button class="clear-cart-btn">Vaciar Carrito</button>
+        </div>
+    </div>
+    <div class="cart-overlay" id="cart-overlay"></div>
+
+    <script src="script.js"></script>
+</body>
+</html>
