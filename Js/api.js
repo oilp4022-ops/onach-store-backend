@@ -1,7 +1,7 @@
 import { CacheSystem } from './cache.js';
 
 export class API {
-    static BASE_URL = 'https://onach-api.onrender.com';
+    static BASE_URL = 'https://onach-urban-store.netlify.app';
 
     static getToken() {
         return localStorage.getItem('onachStoreToken');
