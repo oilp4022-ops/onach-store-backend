@@ -24,6 +24,13 @@ const allowedOrigins = [
     'https://onach-urban-store.netlify.app' 
 ];
 
+
+app.use(cors({
+    origin: allowedOrigins
+}));
+
+app.use(express.json());
+
 app.use(express.json());
 
 // --- RATE LIMITING (Protección contra Fuerza Bruta) ---
