@@ -39,6 +39,21 @@ document.addEventListener('DOMContentLoaded', () => {
     window.addEventListener('click', resetInactivityTimer);
     resetInactivityTimer();
 
+    // --- LÓGICA CAPTCHA (Registro) ---
+    const initCaptcha = () => {
+        const questionEl = document.getElementById('captcha-question');
+        const answerEl = document.getElementById('captcha-answer');
+        const inputEl = document.getElementById('captcha-input');
+        if (questionEl && answerEl) {
+            const n1 = Math.floor(Math.random() * 10) + 1;
+            const n2 = Math.floor(Math.random() * 10) + 1;
+            questionEl.textContent = `Verificación de seguridad: ¿Cuánto es ${n1} + ${n2}?`;
+            answerEl.value = n1 + n2;
+            inputEl.value = '';
+        }
+    };
+    initCaptcha();
+
     // --- PASO 1: LOGIN TRADICIONAL ---
     if (loginForm) {
         loginForm.addEventListener('submit', async (e) => {
@@ -69,7 +84,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             } catch (error) {
                 msg.style.color = 'red';
-                msg.textContent = error.message; 
+                msg.textContent = error.message; // Aquí mostrará si la cuenta está bloqueada
             }
         });
     }
@@ -97,7 +112,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 localStorage.setItem('onachStoreRefreshToken', data.refreshToken); 
                 localStorage.setItem('userName', data.userName);
                 localStorage.setItem('userRole', data.role);
-                resetInactivityTimer(); 
+                resetInactivityTimer(); // Iniciar temporizador al hacer login
 
                 msg.style.color = 'green';
                 msg.textContent = `¡Autenticación exitosa! Entrando al sistema...`;
@@ -122,7 +137,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // --- MANEJADOR DE REGISTRO CON RECAPTCHA ---
+    // --- MANEJADOR DE REGISTRO ---
     if (registerForm) {
         registerForm.addEventListener('submit', async (e) => {
             e.preventDefault();
@@ -134,9 +149,8 @@ document.addEventListener('DOMContentLoaded', () => {
             const email = document.getElementById('register-email').value;
             const password = document.getElementById('register-password').value;
             const confirmPassword = document.getElementById('register-confirm-password').value;
-
-            // Obtener el token de Google reCAPTCHA
-            const captchaResponse = grecaptcha.getResponse();
+            const captchaInput = parseInt(document.getElementById('captcha-input').value);
+            const captchaReal = parseInt(document.getElementById('captcha-answer').value);
 
             const tieneConsecutivos = (str) => {
                 for (let i = 0; i < str.length - 2; i++) {
@@ -146,8 +160,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 return false;
             };
 
-            // Validaciones locales
-            if (captchaResponse.length === 0) { msg.style.color = 'red'; msg.textContent = '❌ Por favor, marca la casilla de "No soy un robot".'; return; }
+            // Validaciones locales (FrontEnd)
+            if (captchaInput !== captchaReal) { msg.style.color = 'red'; msg.textContent = '❌ Error en el CAPTCHA.'; return; }
             if (password !== confirmPassword) { msg.style.color = 'red'; msg.textContent = '❌ Las contraseñas no coinciden.'; return; }
             if (password.length < 8) { msg.style.color = 'red'; msg.textContent = '⚠️ Mínimo 8 caracteres.'; return; }
             if (!/[A-Z]/.test(password)) { msg.style.color = 'red'; msg.textContent = '⚠️ Requiere al menos una mayúscula.'; return; }
@@ -159,8 +173,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const response = await fetch(`${API_URL}/api/register`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    // Enviamos el token del captcha al servidor
-                    body: JSON.stringify({ nombre, apellido, email, password, captchaResponse })
+                    body: JSON.stringify({ nombre, apellido, email, password })
                 });
                 const data = await response.json();
                 if (!response.ok) throw new Error(data.error || 'Error al registrar.');
@@ -168,11 +181,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 msg.style.color = 'green';
                 msg.textContent = '✅ ¡Registro exitoso! Por favor inicia sesión.';
                 registerForm.reset();
-                grecaptcha.reset(); // Reiniciar el widget visual de Google
+                initCaptcha(); 
             } catch (error) {
                 msg.style.color = 'red';
                 msg.textContent = error.message;
-                grecaptcha.reset(); // Reiniciar el widget si hay error
+                initCaptcha(); 
             }
         });
     }
