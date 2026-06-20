@@ -10,10 +10,9 @@ const transporter = nodemailer.createTransport({
     service: 'gmail',
     auth: {
         user: 'oilp.4022@gmail.com', 
-        pass: 'rcoqqdlrmxhhrgwf' 
+        pass: 'rcoqqdlrmxhhrgwf' // Reemplaza 'irstfgyjcgmpuots'
     }
 });
-
 // Función de apoyo para validar letras/números consecutivos
 const tieneConsecutivos = (str) => {
     for (let i = 0; i < str.length - 2; i++) {
