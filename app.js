@@ -13,6 +13,7 @@ const productRoutes = require('./routes/productRoutes');
 const cartRoutes = require('./routes/cartRoutes');
 const orderRoutes = require('./routes/orderRoutes');
 const adminRoutes = require('./routes/adminRoutes');
+const healthRoutes = require('./routes/healthRoutes');
 
 const app = express();
 app.set('trust proxy', 1);
@@ -62,6 +63,7 @@ app.use('/api/verify-mfa', loginLimiter);
 app.use('/api/forgot-password', loginLimiter);
 
 // Conectar las rutas con el prefijo /api
+app.use('/api', healthRoutes); // RF-16: monitoreo (UptimeRobot)
 app.use('/api', authRoutes);
 app.use('/api', productRoutes);
 app.use('/api', cartRoutes);
