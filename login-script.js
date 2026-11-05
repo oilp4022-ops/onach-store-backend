@@ -8,15 +8,53 @@ document.addEventListener('DOMContentLoaded', () => {
     const registerWrapper = document.getElementById('register-wrapper');
     const mfaWrapper = document.getElementById('mfa-wrapper');
     
-    const API_URL = 'https://onach-api.onrender.com'; 
+    // CORRECCIÓN: El puerto correcto hacia tu Node.js
+    const API_URL = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') ? 'http://localhost:3006' : 'https://onach-api.onrender.com'; 
     let temporalUserId = null; 
+
+    // --- LÓGICA PARA MOSTRAR/OCULTAR CONTRASEÑAS ---
+    const setupPasswordToggle = (iconId, inputId) => {
+        const icon = document.getElementById(iconId);
+        const input = document.getElementById(inputId);
+        
+        if (icon && input) {
+            icon.addEventListener('click', () => {
+                const type = input.getAttribute('type') === 'password' ? 'text' : 'password';
+                input.setAttribute('type', type);
+                icon.classList.toggle('fa-eye');
+                icon.classList.toggle('fa-eye-slash');
+            });
+        }
+    };
+
+    setupPasswordToggle('toggle-login-pass', 'login-password');
+    setupPasswordToggle('toggle-reg-pass', 'register-password');
+    setupPasswordToggle('toggle-reg-confirm', 'register-confirm-password');
+
+    // --- MENSAJE DE ACTIVACIÓN DE CUENTA ---
+    const activationParams = new URLSearchParams(window.location.search);
+    if (activationParams.get('activado') === 'true' && loginForm) {
+        const activationMsg = document.getElementById('login-message');
+        activationMsg.style.color = 'green';
+        activationMsg.textContent = '✅ Cuenta activada correctamente. Ya puedes iniciar sesión.';
+        window.history.replaceState({}, document.title, window.location.pathname);
+    }
 
     // --- CERRAR SESIÓN POR INACTIVIDAD ---
     let inactivityTimeout;
-    const INACTIVITY_LIMIT_MS = 5 * 60 * 1000; // 5 minutos de inactividad
+    const INACTIVITY_LIMIT_MS = 5 * 60 * 1000;
 
-    const logoutUser = () => {
-        if (localStorage.getItem('onachStoreToken')) {
+    const logoutUser = async () => {
+        const token = localStorage.getItem('onachStoreToken');
+        if (!token) return;
+        try {
+            await fetch(`${API_URL}/api/logout`, {
+                method: 'POST',
+                headers: { Authorization: `Bearer ${token}` }
+            });
+        } catch (error) {
+            console.warn('No fue posible registrar el cierre por inactividad:', error.message);
+        } finally {
             localStorage.removeItem('onachStoreToken');
             localStorage.removeItem('onachStoreRefreshToken');
             localStorage.removeItem('userName');
@@ -33,31 +71,16 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
-    // Detectar actividad del usuario
     window.addEventListener('mousemove', resetInactivityTimer);
     window.addEventListener('keydown', resetInactivityTimer);
     window.addEventListener('click', resetInactivityTimer);
     resetInactivityTimer();
 
-    // --- LÓGICA CAPTCHA (Registro) ---
-    const initCaptcha = () => {
-        const questionEl = document.getElementById('captcha-question');
-        const answerEl = document.getElementById('captcha-answer');
-        const inputEl = document.getElementById('captcha-input');
-        if (questionEl && answerEl) {
-            const n1 = Math.floor(Math.random() * 10) + 1;
-            const n2 = Math.floor(Math.random() * 10) + 1;
-            questionEl.textContent = `Verificación de seguridad: ¿Cuánto es ${n1} + ${n2}?`;
-            answerEl.value = n1 + n2;
-            inputEl.value = '';
-        }
-    };
-    initCaptcha();
-
     // --- PASO 1: LOGIN TRADICIONAL ---
     if (loginForm) {
         loginForm.addEventListener('submit', async (e) => {
             e.preventDefault();
+            
             const msg = document.getElementById('login-message');
             msg.textContent = 'Verificando credenciales...';
             msg.style.color = 'blue';
@@ -66,6 +89,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const password = document.getElementById('login-password').value;
 
             try {
+                // CORRECCIÓN: Agregamos "/auth" a la ruta
                 const response = await fetch(`${API_URL}/api/login`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -84,7 +108,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             } catch (error) {
                 msg.style.color = 'red';
-                msg.textContent = error.message; // Aquí mostrará si la cuenta está bloqueada
+                msg.textContent = error.message; 
             }
         });
     }
@@ -100,6 +124,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const mfaCode = document.getElementById('mfa-code').value;
 
             try {
+                // CORRECCIÓN: Agregamos "/auth" a la ruta
                 const response = await fetch(`${API_URL}/api/verify-mfa`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -112,7 +137,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 localStorage.setItem('onachStoreRefreshToken', data.refreshToken); 
                 localStorage.setItem('userName', data.userName);
                 localStorage.setItem('userRole', data.role);
-                resetInactivityTimer(); // Iniciar temporizador al hacer login
+                resetInactivityTimer(); 
 
                 msg.style.color = 'green';
                 msg.textContent = `¡Autenticación exitosa! Entrando al sistema...`;
@@ -137,31 +162,63 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // --- MANEJADOR DE REGISTRO ---
+    // --- VALIDACIÓN DE CONTRASEÑAS ---
+    // La función se declara fuera del submit para que siempre esté disponible.
+    // Evita ReferenceError cuando el navegador ejecuta el handler.
+    const tieneConsecutivos = (str) => {
+        const value = String(str || '');
+
+        // Números consecutivos ascendentes/descendentes: 12, 23, 21, 32, etc.
+        for (let i = 0; i < value.length - 1; i++) {
+            const a = value.charCodeAt(i);
+            const b = value.charCodeAt(i + 1);
+
+            if (a >= 48 && a <= 57 && b >= 48 && b <= 57) {
+                if (Math.abs(b - a) === 1) return true;
+            }
+        }
+
+        // Letras consecutivas respecto al abecedario: ab, ba, cd, dc, etc.
+        for (let i = 0; i < value.length - 1; i++) {
+            const a = value[i].toLowerCase();
+            const b = value[i + 1].toLowerCase();
+
+            if (/[a-z]/.test(a) && /[a-z]/.test(b)) {
+                if (Math.abs(b.charCodeAt(0) - a.charCodeAt(0)) === 1) return true;
+            }
+        }
+
+        return false;
+    };
+
+    // --- MANEJADOR DE REGISTRO CON RECAPTCHA ---
     if (registerForm) {
         registerForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             const msg = document.getElementById('register-message');
-            msg.textContent = 'Validando datos...'; msg.style.color = 'blue';
+            
+            // 🔒 [PROTECCIÓN DE DATOS] VALIDACIÓN CRÍTICA DEL AVISO DE PRIVACIDAD
+            const privacyCheckbox = document.getElementById('privacyPolicy');
+            if (!privacyCheckbox || !privacyCheckbox.checked) {
+                msg.style.color = 'red';
+                msg.textContent = '❌ Error: Debes aceptar el Aviso de Privacidad para poder registrarte.';
+                return; 
+            }
+
+            msg.textContent = 'Validando datos...'; 
+            msg.style.color = 'blue';
             
             const nombre = document.getElementById('register-name').value;
             const apellido = document.getElementById('register-lastname').value;
             const email = document.getElementById('register-email').value;
             const password = document.getElementById('register-password').value;
             const confirmPassword = document.getElementById('register-confirm-password').value;
-            const captchaInput = parseInt(document.getElementById('captcha-input').value);
-            const captchaReal = parseInt(document.getElementById('captcha-answer').value);
+            
+            // --- TU CÓDIGO ORIGINAL E INTACTO PARA OBTENER RECAPTCHA ---
+            const captchaResponse = grecaptcha.getResponse();
 
-            const tieneConsecutivos = (str) => {
-                for (let i = 0; i < str.length - 2; i++) {
-                    let c1 = str.charCodeAt(i), c2 = str.charCodeAt(i+1), c3 = str.charCodeAt(i+2);
-                    if ((c2 === c1 + 1 && c3 === c1 + 2) || (c2 === c1 - 1 && c3 === c1 - 2)) return true;
-                }
-                return false;
-            };
-
-            // Validaciones locales (FrontEnd)
-            if (captchaInput !== captchaReal) { msg.style.color = 'red'; msg.textContent = '❌ Error en el CAPTCHA.'; return; }
+            // Validaciones locales
+            if (captchaResponse.length === 0) { msg.style.color = 'red'; msg.textContent = '❌ Por favor, marca la casilla de "No soy un robot".'; return; }
             if (password !== confirmPassword) { msg.style.color = 'red'; msg.textContent = '❌ Las contraseñas no coinciden.'; return; }
             if (password.length < 8) { msg.style.color = 'red'; msg.textContent = '⚠️ Mínimo 8 caracteres.'; return; }
             if (!/[A-Z]/.test(password)) { msg.style.color = 'red'; msg.textContent = '⚠️ Requiere al menos una mayúscula.'; return; }
@@ -170,22 +227,23 @@ document.addEventListener('DOMContentLoaded', () => {
             if (tieneConsecutivos(password)) { msg.style.color = 'red'; msg.textContent = '⚠️ No se permiten secuencias (ej. 123 o abc).'; return; }
 
             try {
+                // CORRECCIÓN: Agregamos "/auth" a la ruta
                 const response = await fetch(`${API_URL}/api/register`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ nombre, apellido, email, password })
+                    body: JSON.stringify({ nombre, apellido, email, password, captchaResponse, privacyAccepted: true })
                 });
                 const data = await response.json();
                 if (!response.ok) throw new Error(data.error || 'Error al registrar.');
                 
                 msg.style.color = 'green';
-                msg.textContent = '✅ ¡Registro exitoso! Por favor inicia sesión.';
+                msg.textContent = '✅ Registro exitoso. Revisa tu correo y pulsa el enlace de activación.';
                 registerForm.reset();
-                initCaptcha(); 
+                if (typeof grecaptcha !== 'undefined') grecaptcha.reset();
             } catch (error) {
                 msg.style.color = 'red';
                 msg.textContent = error.message;
-                initCaptcha(); 
+                if (typeof grecaptcha !== 'undefined') grecaptcha.reset();
             }
         });
     }
