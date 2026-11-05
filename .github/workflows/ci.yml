@@ -1,0 +1,132 @@
+# Pipeline de integración continua - Onach Urban Store
+# Se ejecuta en cada push a ramas de trabajo y en cada Pull Request hacia develop o main.
+# Etapas: validaciones -> pruebas de API (con cobertura) y E2E -> build y prueba de humo de la imagen Docker.
+name: CI Onach Urban Store
+
+on:
+  push:
+    branches: [main, develop, 'feature/**', 'fix/**', 'test/**', 'ci/**', 'release/**', 'hotfix/**']
+  pull_request:
+    branches: [main, develop]
+  workflow_dispatch:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  NODE_VERSION: '22'
+
+jobs:
+  validaciones:
+    name: 1. Validaciones y análisis estático
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+      - name: Instalar dependencias (npm ci)
+        run: npm ci
+      - name: Validaciones automáticas (sintaxis, secretos, .env, referencias)
+        run: npm run validar
+
+  pruebas-api:
+    name: 2. Pruebas unitarias e integración (API)
+    needs: validaciones
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+      - run: npm ci
+      - name: Ejecutar pruebas con cobertura (umbral 60 %)
+        run: |
+          mkdir -p coverage
+          npm run test:coverage | tee coverage/resultado.txt
+      - name: Resumen en GitHub
+        if: always()
+        run: |
+          echo "## Pruebas de API" >> "$GITHUB_STEP_SUMMARY"
+          echo '```' >> "$GITHUB_STEP_SUMMARY"
+          grep -E "^ℹ (tests|pass|fail)|all files" coverage/resultado.txt >> "$GITHUB_STEP_SUMMARY" || true
+          echo '```' >> "$GITHUB_STEP_SUMMARY"
+      - name: Publicar reporte de cobertura
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cobertura-api
+          path: coverage/
+
+  pruebas-e2e:
+    name: 3. Pruebas E2E del frontend (Playwright)
+    needs: validaciones
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+      - run: npm ci
+      - name: Instalar Playwright y Chromium
+        run: |
+          npm install --no-save playwright@1.49.1
+          npx playwright install --with-deps chromium
+      - name: Ejecutar pruebas E2E
+        run: npm run test:e2e
+      - name: Publicar capturas de las pruebas E2E
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: capturas-e2e
+          path: test-results/
+
+  build-docker:
+    name: 4. Build de imagen Docker y prueba de humo
+    needs: [pruebas-api, pruebas-e2e]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Construir imagen
+        run: docker build -t onach-api:${{ github.sha }} .
+      - name: Prueba de humo de /api/health
+        run: |
+          docker run -d --name onach-api -p 3006:3006 -e JWT_SECRET=ci onach-api:${{ github.sha }}
+          sleep 5
+          curl -s -o salud.json -w "%{http_code}\n" http://localhost:3006/api/health | tee codigo.txt
+          cat salud.json
+          # Sin base de datos en CI la API debe responder y reportar database=down (503)
+          grep -q '"status"' salud.json
+          docker logs onach-api
+      - name: Resumen en GitHub
+        run: |
+          echo "## Imagen Docker" >> "$GITHUB_STEP_SUMMARY"
+          echo "Imagen \`onach-api:${{ github.sha }}\` construida. /api/health respondió $(cat codigo.txt): \`$(cat salud.json)\`" >> "$GITHUB_STEP_SUMMARY"
+
+  notificar:
+    name: 5. Comunicación de resultados
+    needs: [validaciones, pruebas-api, pruebas-e2e, build-docker]
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Resumen final
+        run: |
+          echo "## Resultado del pipeline" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Etapa | Resultado |" >> "$GITHUB_STEP_SUMMARY"
+          echo "|---|---|" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Validaciones | ${{ needs.validaciones.result }} |" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Pruebas API | ${{ needs.pruebas-api.result }} |" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Pruebas E2E | ${{ needs.pruebas-e2e.result }} |" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Docker | ${{ needs.build-docker.result }} |" >> "$GITHUB_STEP_SUMMARY"
+      - name: Notificar a Discord (#github-notificaciones)
+        env:
+          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
+        if: env.DISCORD_WEBHOOK != ''
+        run: |
+          ESTADO="${{ contains(needs.*.result, 'failure') && '❌ falló' || '✅ correcto' }}"
+          curl -s -H "Content-Type: application/json" -X POST "$DISCORD_WEBHOOK" \
+            -d "{\"content\":\"CI Onach ${ESTADO} en ${{ github.ref_name }} (${{ github.actor }}): ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}\"}"
