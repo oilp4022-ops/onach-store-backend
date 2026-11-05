@@ -2,6 +2,11 @@
 
 Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/) y [SemVer](https://semver.org/lang/es/).
 
+## [Sin liberar]
+
+### Corregido
+- Las tarjetas de producto del inicio leían `image` y la API devuelve `imagen_url` (imágenes rotas). Detectado por E2E-02.
+
 ## [0.2.1] — 2026-11-04 · Hotfix
 
 ### Corregido
