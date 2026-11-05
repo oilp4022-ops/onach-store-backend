@@ -1,40 +1,35 @@
-const mysql = require('mysql2');
+const mysql = require('mysql2/promise');
+require('dotenv').config();
 
 class Database {
     constructor() {
         if (!Database.instance) {
-            this.connection = mysql.createConnection({
-                host: process.env.DB_HOST,
-                user: process.env.DB_USER,
-                password: process.env.DB_PASS,
-                database: process.env.DB_NAME
+            this.pool = mysql.createPool({
+                host: process.env.DB_HOST || '127.0.0.1',
+                user: process.env.DB_USER || 'root',
+                password: process.env.DB_PASSWORD || process.env.DB_PASS || '',
+                database: 'onachus', // Conexión directa y segura a tu BD
+                port: parseInt(process.env.DB_PORT) || 3306,
+                waitForConnections: true,
+                connectionLimit: 10,
+                queueLimit: 0
             });
-            
-            this.connection.connect(err => {
-                if (err) console.error('Error de conexión a BD:', err.stack);
-                else console.log('Conexión a BD (Singleton) exitosa. ID:', this.connection.threadId);
-            });
-
             Database.instance = this;
         }
         return Database.instance;
     }
 
-    query(sql, args) {
-        return new Promise((resolve, reject) => {
-            this.connection.query(sql, args, (err, rows) => {
-                if (err) return reject(err);
-                resolve(rows);
-            });
-        });
-    }
-    
-    // Método para obtener la instancia (o crearla)
     static getInstance() {
-        if (!this.instance) {
-            new Database();
+        if (!Database.instance) {
+            Database.instance = new Database();
         }
-        return this.instance;
+        return Database.instance;
+    }
+
+    // 👇 ESTA ES LA FUNCIÓN QUE SE HABÍA BORRADO Y CAUSABA EL ERROR
+    async query(sql, params) {
+        const [results] = await this.pool.execute(sql, params);
+        return results;
     }
 }
 
