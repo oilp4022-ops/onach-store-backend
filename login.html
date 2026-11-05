@@ -18,7 +18,8 @@
         }
         .form-wrapper {
             flex: 1;
-            min-width: 300px;
+            min-width: min(300px, 100%);
+            box-sizing: border-box;
             padding: 2rem;
             background-color: var(--color-blanco);
             border-radius: 10px;
@@ -34,12 +35,31 @@
         .form-group label { display: block; margin-bottom: 0.5rem; font-weight: 600; }
         .form-group input { width: 100%; padding: 0.8rem; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box; }
         
-        .captcha-group { background-color: #f9f9f9; padding: 10px; border-radius: 5px; border: 1px solid #eee; margin-bottom: 1rem; }
-        .captcha-label { color: var(--color-carmesi); font-weight: bold; margin-bottom: 5px; display: block; }
-
         .btn-form { width: 100%; padding: 0.8rem; border: none; border-radius: 5px; background-color: var(--color-carmesi); color: white; font-size: 1rem; font-weight: bold; cursor: pointer; transition: 0.3s ease; }
         .btn-form:hover { background-color: var(--color-rosa-oscuro); }
         .message-box { text-align: center; margin-top: 1rem; font-weight: bold; }
+
+        /* Estilos para el contenedor del ojito de contraseña */
+        .password-container {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+        .password-container input {
+            width: 100%;
+            padding-right: 40px; /* Deja espacio para que el texto no choque con el icono */
+        }
+        .toggle-password {
+            position: absolute;
+            right: 15px;
+            cursor: pointer;
+            color: #888;
+            font-size: 1.1rem;
+            transition: color 0.3s;
+        }
+        .toggle-password:hover {
+            color: var(--color-carmesi); /* Cambia al color de tu tema al pasar el mouse */
+        }
     </style>
 </head>
 <body>
@@ -67,15 +87,25 @@
                 </div>
                 <div class="form-group">
                     <label>Contraseña</label>
-                    <input type="password" id="login-password" required>
+                    <div class="password-container">
+                        <input type="password" id="login-password" required>
+                        <i class="fas fa-eye toggle-password" id="toggle-login-pass"></i>
+                    </div>
                 </div>
                 <button type="submit" class="btn-form">Entrar</button>
                 <div id="login-message" class="message-box"></div>
             </form>
         </div>
+       
 
         <div class="form-wrapper" id="register-wrapper">
             <h2>Crear Cuenta</h2>
+             <div class="privacy-container" style="margin-bottom: 15px; text-align: left; font-size: 0.9rem;">
+    <input type="checkbox" id="privacyPolicy" name="privacyPolicy" required>
+    <label for="privacyPolicy" style="margin-left: 5px; color: #555;">
+        Acepto el <a href="aviso-privacidad.html" id="viewPrivacyNotice" style="color: #007bff; text-decoration: underline;">Aviso de Privacidad Integral</a> y los Términos de Servicio de Onach.
+    </label>
+</div>
             <form id="register-form">
                 <div class="form-group">
                     <label>Nombre</label>
@@ -89,19 +119,24 @@
                     <label>Correo Electrónico</label>
                     <input type="email" id="register-email" required>
                 </div>
-                <div class="form-group">
+               <div class="form-group">
                     <label>Contraseña</label>
-                    <input type="password" id="register-password" required minlength="6">
+                    <div class="password-container">
+                        <input type="password" id="register-password" required minlength="8">
+                        <i class="fas fa-eye toggle-password" id="toggle-reg-pass"></i>
+                    </div>
                 </div>
                 <div class="form-group">
                     <label>Confirmar Contraseña</label>
-                    <input type="password" id="register-confirm-password" required>
+                    <div class="password-container">
+                        <input type="password" id="register-confirm-password" required>
+                        <i class="fas fa-eye toggle-password" id="toggle-reg-confirm"></i>
+                    </div>
                 </div>
-                <div class="form-group captcha-group">
-                    <label class="captcha-label" id="captcha-question">Verificación: ¿Cuánto es 3 + 4?</label>
-                    <input type="number" id="captcha-input" placeholder="Escribe el resultado" required>
-                    <input type="hidden" id="captcha-answer"> 
-                </div>
+                
+               <div class="g-recaptcha" data-sitekey="6LftyYAtAAAAAPDdxk_KZh0UwJI0fy-ObJMcBrko"></div>
+               <br>
+
                 <button type="submit" class="btn-form">Registrarse</button>
                 <div id="register-message" class="message-box"></div>
             </form>
@@ -110,7 +145,7 @@
         <div class="form-wrapper" id="mfa-wrapper" style="display: none; max-width: 450px; margin: 0 auto; flex: none;">
             <h2><i class="fas fa-shield-alt"></i> Seguridad en 2 Pasos</h2>
             <p style="text-align:center; margin-bottom: 20px; color: #555;">
-                Hemos enviado un código de seguridad de 6 dígitos. (Para esta práctica, revisa tu terminal negra de Node.js para ver el SMS simulado).
+                Hemos enviado un código de seguridad de 6 dígitos.
             </p>
             <form id="mfa-form">
                 <div class="form-group">
@@ -132,6 +167,8 @@
         <p style="text-align: center; padding: 20px; background: #000; color: white; margin:0;">&copy; 2026 Onach Urban Store. Seguridad Bancaria.</p>
     </footer>
 
-    <script src="login-script.js"></script> 
+    <script src="login-script.js?v=3"></script> 
+    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
 </body>
 </html>
+

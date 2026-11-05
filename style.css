@@ -402,11 +402,18 @@ footer { background-color: var(--color-negro); color: var(--color-blanco); paddi
     .hero-content h1 { font-size: 2rem; }
     .hero-buttons { flex-direction: column; }
     .carousel-slide img { height: 250px; }
-    .feature-card { min-width: 100%; }
+    .feature-card { min-width: 0; width: 100%; box-sizing: border-box; }
     
     /* Reponsividad de la página de Detalles */
     .product-content-wrapper { grid-template-columns: 1fr; }
     .product-details { position: static; top: 0; }
     .product-details h1 { font-size: 2rem; }
     .detail-price { font-size: 1.8rem; }
+}
+/* RNF-08 (diseño adaptable): ninguna imagen puede exceder el ancho de su contenedor.
+   Detectado por E2E-05: en catalogo.html una imagen de 854 px generaba desplazamiento horizontal a 375 px. */
+img { max-width: 100%; height: auto; }
+@media (max-width: 480px) {
+    /* El contador del carrito sobresalía 10 px del borde derecho en móviles (E2E-05). */
+    .cart-count { right: 0; }
 }
