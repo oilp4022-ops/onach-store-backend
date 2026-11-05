@@ -1,6 +1,6 @@
 {
   "name": "onach-urban-store",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Onach Urban Store - API REST y frontend de comercio electrónico de ropa urbana",
   "main": "server.js",
   "scripts": {

@@ -10,6 +10,12 @@ process.env.RECAPTCHA_SECRET = 'recaptcha-de-prueba';
 process.env.EMAIL_USER = 'pruebas@onach.test';
 process.env.DOTENV_CONFIG_QUIET = 'true';
 
+// La salida de console.log del código bajo prueba (p. ej. el log de reCAPTCHA) se escribe en stdout,
+// el mismo canal que usa el test runner de Node para enviar resultados al proceso principal; de forma
+// intermitente lo corrompía ("Unable to deserialize cloned data"). Se captura en memoria.
+const logsCapturados = [];
+console.log = (...args) => { logsCapturados.push(args); };
+
 const nodemailer = require('nodemailer');
 const correosEnviados = [];
 nodemailer.createTransport = () => ({
@@ -58,6 +64,7 @@ module.exports = {
     app,
     consultas,
     correosEnviados,
+    logsCapturados,
     setDb: (fn) => { manejador = fn; },
     setCaptcha: (v) => { captchaValido = v; },
     limpiar: () => { consultas.length = 0; correosEnviados.length = 0; manejador = async () => []; captchaValido = true; }

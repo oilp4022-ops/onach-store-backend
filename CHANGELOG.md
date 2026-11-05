@@ -2,6 +2,11 @@
 
 Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/) y [SemVer](https://semver.org/lang/es/).
 
+## [0.2.1] — 2026-11-04 · Hotfix
+
+### Corregido
+- Fallo intermitente del test runner ("Unable to deserialize cloned data") causado por `console.log` en stdout durante las pruebas: 7 de 20 ejecuciones fallaban; después de la corrección, 20 de 20 aprueban.
+
 ## [0.2.0] — 2026-11-04 · Unidad II (Sprint 2)
 
 ### Agregado
