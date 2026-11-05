@@ -24,7 +24,7 @@ export class DOM {
         container.innerHTML = products.map(p => `
             <div class="product-card">
                 <div class="product-image-container">
-                    <img src="${this.getImageUrl(p.image)}" alt="${p.nombre}" loading="lazy">
+                    <img src="${this.getImageUrl(p.image || p.imagen_url)}" alt="${p.nombre}" loading="lazy">
                 </div>
                 <div class="product-info">
                     <h3>${p.nombre}</h3>
