@@ -1,0 +1,9 @@
+services:
+  onach-api:
+    build: .
+    container_name: onach-api
+    ports:
+      - "3006:3006"
+    env_file:
+      - .env
+    restart: unless-stopped
