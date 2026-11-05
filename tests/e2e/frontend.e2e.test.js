@@ -57,6 +57,10 @@ describe('Frontend Onach Urban Store (E2E)', () => {
         const grid = page.locator('#main-product-grid');
         await grid.getByText('Sudadera BoneFish Black').waitFor({ timeout: 5000 });
         assert.ok(await grid.getByText('Playera Sullen Skull').isVisible());
+        // Contrato API-frontend: las imágenes de las tarjetas deben cargarse a partir de imagen_url
+        await page.waitForTimeout(500);
+        const rotas = await grid.locator('img').evaluateAll((imgs) => imgs.filter((i) => !i.complete || i.naturalWidth === 0).map((i) => i.getAttribute('src')));
+        assert.deepEqual(rotas, [], 'Imágenes rotas en las tarjetas: ' + rotas.join(', '));
         await grid.scrollIntoViewIfNeeded();
         await page.screenshot({ path: path.join(CAPTURAS, 'E2E-02-inicio-productos.png') });
         await page.close();
