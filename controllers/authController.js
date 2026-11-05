@@ -181,7 +181,8 @@ const login = async (req, res) => {
         if (!normalizedEmail || !password) return res.status(400).json({ error: 'Email y contraseña son obligatorios.' });
 
         const results = unwrap(await db.query('SELECT * FROM clientes WHERE LOWER(email) = ?', [normalizedEmail]));
-        if (results.length === 0) return res.status(401).json({ error: 'Usuario no encontrado.' });
+        // Mensaje genérico: no revelar si el correo existe (CP-04, enumeración de usuarios)
+        if (results.length === 0) return res.status(401).json({ error: 'Correo o contraseña incorrectos.' });
         const user = results[0];
 
         if (user.estado === 'inactivo') return res.status(403).json({ error: 'Tu cuenta no está activa. Revisa tu correo electrónico.' });
@@ -195,7 +196,7 @@ const login = async (req, res) => {
             } else {
                 await db.query('UPDATE clientes SET intentos_fallidos = ? WHERE id_cliente = ?', [intentos, user.id_cliente]);
             }
-            return res.status(401).json({ error: 'Contraseña incorrecta.' });
+            return res.status(401).json({ error: 'Correo o contraseña incorrectos.' });
         }
 
         await db.query('UPDATE clientes SET intentos_fallidos = 0, bloqueo_hasta = NULL WHERE id_cliente = ?', [user.id_cliente]);
