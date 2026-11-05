@@ -3,18 +3,18 @@
 <head>
     <script>
         const role = localStorage.getItem('userRole');
-        if (role !== 'admin') {
+        if (role !== 'admin' && role !== 'superadmin') {
             alert('Acceso restringido a administradores.');
             window.location.href = 'index.html';
         }
     </script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gestión de Inventario Onach</title>
+    <title>Gestión de Inventario y Usuarios Onach</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
-        /* ESTILOS DE GESTIÓN */
+        /* ESTILOS DE GESTIÓN (Tus estilos originales intactos) */
         .gestion-container { max-width: 1000px; margin: 40px auto; padding: 20px; display: grid; grid-template-columns: 1fr 2fr; gap: 30px; }
         .form-card, .table-card { background: white; padding: 25px; border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
         .form-group { margin-bottom: 15px; }
@@ -37,6 +37,16 @@
         .btn-api { background: #28a745; color: white; padding: 8px 15px; border: none; border-radius: 5px; cursor: pointer; font-weight: bold;}
         .btn-api:hover { background: #218838; }
         @media (max-width: 768px) { .gestion-container { grid-template-columns: 1fr; } }
+
+        /* NUEVOS ESTILOS PARA EL MODAL DE USUARIOS */
+        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 1000; justify-content: center; align-items: center; }
+        .modal-content { background: white; padding: 30px; border-radius: 10px; width: 400px; max-width: 90%; position: relative; animation: slideIn 0.3s ease; }
+        .close-modal { position: absolute; top: 15px; right: 20px; font-size: 24px; cursor: pointer; color: #666; }
+        .close-modal:hover { color: #000; }
+        .badge { padding: 5px 10px; border-radius: 20px; font-size: 0.8rem; font-weight: bold; }
+        .bg-success { background-color: #d4edda; color: #155724; }
+        .bg-warning { background-color: #fff3cd; color: #856404; }
+        .bg-info { background-color: #d1ecf1; color: #0c5460; }
     </style>
 </head>
 <body>
@@ -49,8 +59,8 @@
         </div>
     </header>
 
-    <main style="padding-top: 80px;">
-        <h2 class="section-title">Panel de Gestión</h2>
+    <main style="padding-top: 80px; padding-bottom: 50px;">
+        <h2 class="section-title" style="text-align: center;">Panel de Gestión de Inventario</h2>
         
         <div class="gestion-container">
             <div class="form-card animate-entry">
@@ -108,8 +118,129 @@
                 </table>
             </div>
         </div>
+
+        <hr style="max-width: 1000px; margin: 40px auto; border: 1px solid #ddd;">
+
+        <h2 class="section-title" style="text-align: center;">Catálogo de Usuarios</h2>
+        
+        <div class="gestion-container" style="grid-template-columns: 1fr;"> <div class="table-card animate-entry">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 20px;">
+                    <h3>Gestión de Clientes y Administradores</h3>
+                    <button class="btn-api" onclick="abrirModalUsuario()" style="background-color: var(--color-rosa);"><i class="fas fa-user-plus"></i> Nuevo Usuario</button>
+                </div>
+
+                <table style="width: 100%;">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Nombre</th>
+                            <th>Email</th>
+                            <th>Rol</th>
+                            <th>Estado</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tabla-usuarios-body">
+                        </tbody>
+                </table>
+            </div>
+        </div>
+
+        <hr style="max-width: 1000px; margin: 40px auto; border: 1px solid #ddd;">
+
+        <h2 class="section-title" style="text-align: center;">Catálogo de Roles</h2>
+        <div class="gestion-container" style="grid-template-columns: 1fr 2fr;">
+            <div class="form-card animate-entry">
+                <h3 id="rol-form-title">Nuevo Rol</h3>
+                <form id="rol-form">
+                    <div class="form-group">
+                        <label>Nombre del rol</label>
+                        <input type="text" id="rol-nombre" placeholder="Ej. supervisor" required maxlength="50">
+                    </div>
+                    <div class="form-group">
+                        <label>Descripción</label>
+                        <input type="text" id="rol-descripcion" placeholder="Descripción del rol">
+                    </div>
+                    <div class="form-group">
+                        <label>Estado</label>
+                        <select id="rol-estado">
+                            <option value="activo">Activo</option>
+                            <option value="inactivo">Inactivo</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn-form">Guardar Rol</button>
+                    <button type="button" class="btn-form" style="background:#666; margin-top:10px;" onclick="limpiarFormularioRol()">Limpiar</button>
+                </form>
+            </div>
+            <div class="table-card animate-entry">
+                <h3>Roles disponibles</h3>
+                <table>
+                    <thead><tr><th>ID</th><th>Nombre</th><th>Descripción</th><th>Estado</th><th>Acciones</th></tr></thead>
+                    <tbody id="tabla-roles-body"></tbody>
+                </table>
+            </div>
+        </div>
+
     </main>
 
+    <div id="modal-usuario" class="modal-overlay">
+        <div class="modal-content">
+            <span class="close-modal" onclick="cerrarModalUsuario()">&times;</span>
+            <h3 id="modal-usuario-title">Registrar Usuario</h3>
+            <form id="form-usuario" style="margin-top: 20px;">
+                <input type="hidden" id="usuario-id">
+                <div class="form-group">
+                    <label>Nombre</label>
+                    <input type="text" id="usuario-nombre" required>
+                </div>
+                <div class="form-group">
+                    <label>Apellido</label>
+                    <input type="text" id="usuario-apellido">
+                </div>
+                <div class="form-group">
+                    <label>Correo Electrónico</label>
+                    <input type="email" id="usuario-email" required>
+                </div>
+                <div class="form-group">
+                    <label>Contraseña</label>
+                    <input type="password" id="usuario-password" placeholder="Dejar en blanco para no cambiar">
+                </div>
+                <div class="form-group">
+                    <label>Rol</label>
+                    <select id="usuario-rol">
+                        <option value="cliente">Cliente</option>
+                        <option value="admin">Administrador</option>
+                        <option value="superadmin">Superadministrador</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Estado</label>
+                    <select id="usuario-estado">
+                        <option value="activo">Activo</option>
+                        <option value="inactivo">Inactivo</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn-form" style="background-color: #000; color: #fff; width: 100%; border:none; padding:10px; cursor:pointer;">Guardar Datos</button>
+            </form>
+        </div>
+    </div>
+
     <script type="module" src="js/admin.js"></script>
+    
+    <script src="js/usuarios.js"></script>
+    <script src="js/roles.js"></script>
+    
+    <script>
+        function abrirModalUsuario() {
+            document.getElementById('form-usuario').reset();
+            document.getElementById('usuario-id').value = '';
+            document.getElementById('modal-usuario-title').innerText = 'Registrar Nuevo Usuario';
+            document.getElementById('modal-usuario').style.display = 'flex';
+        }
+
+        function cerrarModalUsuario() {
+            document.getElementById('modal-usuario').style.display = 'none';
+        }
+    </script>
 </body>
 </html>

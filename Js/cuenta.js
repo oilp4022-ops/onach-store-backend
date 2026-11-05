@@ -44,8 +44,13 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     // 4. Lógica para Cerrar Sesión
-    document.getElementById('logout-btn').addEventListener('click', () => {
-        if (confirm('¿Estás seguro de que deseas cerrar sesión?')) {
+    document.getElementById('logout-btn').addEventListener('click', async () => {
+        if (!confirm('¿Estás seguro de que deseas cerrar sesión?')) return;
+        try {
+            await API.request('/logout', 'POST');
+        } catch (error) {
+            console.warn('No fue posible registrar el cierre de sesión en el servidor:', error.message);
+        } finally {
             localStorage.removeItem('onachStoreToken');
             localStorage.removeItem('onachStoreRefreshToken');
             localStorage.removeItem('userName');
