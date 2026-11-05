@@ -1,5 +1,5 @@
 // js/data.js (VERSIÓN CONECTADA A BD)
-const API_URL = 'http://127.0.0.1:3006/api';
+const API_URL = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') ? 'http://localhost:3006/api' : 'https://onach-api.onrender.com/api';
 
 const getToken = () => localStorage.getItem('onachStoreToken');
 

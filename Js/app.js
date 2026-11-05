@@ -12,27 +12,34 @@ const initTienda = async () => {
     initCartUI();
     await syncCart();
 
-    // 1. LÓGICA SI ESTAMOS EN EL INICIO (index.html)
+    // 1. LÓGICA SI ESTAMOS EN EL INICIO (index.html) - CONSUMO DE WEB SERVICE
     const grid = document.getElementById('main-product-grid');
     if (grid) {
         DOM.renderSkeleton(grid, 8);
         try {
-            const [productos] = await Promise.all([
-                API.request('/productos', 'GET', null, true)
-            ]);
-            DOM.renderProducts(productos, grid);
-            Animations.initScrollObserver();
-
-            let lastCount = productos.length;
-            API.startSmartPolling((newProducts) => {
-                if (newProducts.length !== lastCount) {
-                    DOM.renderProducts(newProducts, grid);
-                    Animations.initScrollObserver();
-                    lastCount = newProducts.length;
+            // === INICIO DE CÓDIGO PARA LA EVIDENCIA (Consumo Fetch API) ===
+            const respuesta = await fetch(`${API.BASE_URL}/productos`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json'
                 }
             });
+
+            if (!respuesta.ok) {
+                throw new Error(`Error HTTP en la petición: ${respuesta.status}`);
+            }
+
+            // Convertimos la respuesta del Web Service a JSON
+            const resultado = await respuesta.json();
+
+            // Pasamos el arreglo de productos (resultado.data) a tu renderizador gráfico
+            DOM.renderProducts(resultado, grid);
+            Animations.initScrollObserver();
+            // === FIN DE CÓDIGO PARA LA EVIDENCIA ===
+
         } catch (error) {
-            grid.innerHTML = '<p style="color:red; text-align:center;">Error al conectar con la base de datos.</p>';
+            console.error("Fallo al consumir el Web Service:", error);
+            grid.innerHTML = '<p style="color:red; text-align:center; grid-column: 1 / -1;">Error al conectar con el servidor Backend.</p>';
         }
     }
 
